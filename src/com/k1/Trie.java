@@ -2,10 +2,21 @@ package com.k1;
 
 import java.util.*;
 
-class Trie {
+public class Trie {
     static class TrieN {
         Map<Character, TrieN> children = new TreeMap<Character, TrieN>();
         boolean ind;
+        Map<Character, TrieN> getChildren() {
+            return children;
+        }
+
+        boolean isEndOfWord() {
+            return ind;
+        }
+
+        void setEndOfWord(boolean endOfWord) {
+            this.ind = endOfWord;
+        }
     }
 
     TrieN root = new TrieN();
@@ -64,5 +75,31 @@ class Trie {
             System.out.println();
         }
     }
-    public static void main(String[] args) {}
+
+
+    public void remove(String word) {
+        remove(root, word, 0);
+    }
+
+    private boolean remove(TrieN current, String word, int index) {
+        if (index == word.length()) {
+            if (!current.isEndOfWord()) {
+                return false;
+            }
+            current.setEndOfWord(false);
+            return current.getChildren().isEmpty();
+        }
+        char ch = word.charAt(index);
+        TrieN node = current.getChildren().get(ch);
+        if (node == null) {
+            return false;
+        }
+        boolean shouldDeleteCurrentNode = remove(node, word, index + 1) && !node.isEndOfWord();
+
+        if (shouldDeleteCurrentNode) {
+            current.getChildren().remove(ch);
+            return current.getChildren().isEmpty();
+        }
+        return false;
+    }
 }
